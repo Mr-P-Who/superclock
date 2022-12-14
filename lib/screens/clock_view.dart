@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class WorldClock extends StatelessWidget {
-  const WorldClock({super.key});
+class Clock extends StatelessWidget {
+  const Clock({super.key});
 
   @override
   Widget build(BuildContext context) {

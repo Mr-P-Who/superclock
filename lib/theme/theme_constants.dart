@@ -8,6 +8,7 @@ ThemeData myDarkTheme(BuildContext context) {
   return ThemeData(
     brightness: Brightness.dark,
     primaryColor: primaryColor,
+    scaffoldBackgroundColor: primaryColor,
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: buttonColor,
     ),

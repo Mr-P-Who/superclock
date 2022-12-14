@@ -1,38 +1,86 @@
 import 'package:flutter/material.dart';
-import 'package:animations/animations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:superclock/screens/alarm_view.dart';
+import 'package:superclock/screens/clock_view.dart';
 import 'package:superclock/screens/stopwatch_view.dart';
 import 'package:superclock/screens/timer_view.dart';
-import 'package:superclock/screens/world_clock_view.dart';
 import 'package:superclock/theme/theme_constants.dart';
 
-class HomePage extends StatefulWidget {
+var indexProvider = StateProvider<int>((ref) => 0);
+
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
+  final List<String> appbarItems = const [
+    'Alarm',
+    'Clock',
+    'Timer',
+    'Stopwatch'
+  ];
 
-class _HomePageState extends State<HomePage> {
-  int selectedPage = 0;
-  List<Widget> pages = [Alarm(), WorldClock(), Timer(), StopWatch()];
-  void onItemTapped(int index) {
-    setState(() {
-      selectedPage = index;
-    });
-  }
+  final List<Widget> bodyItems = const [
+    Alarm(),
+    Clock(),
+    Timer(),
+    StopWatch(),
+  ];
+
+  final List<BottomNavigationBarItem> navItems = const [
+    BottomNavigationBarItem(
+      icon: Icon(Icons.alarm),
+      label: 'Alarm',
+      backgroundColor: primaryColor,
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.language_outlined),
+      label: 'Clock',
+      backgroundColor: primaryColor,
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.hourglass_empty_outlined),
+      label: 'Timer',
+      backgroundColor: primaryColor,
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.timer_outlined),
+      label: 'Stopwatch',
+      backgroundColor: primaryColor,
+    ),
+  ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      body: PageTransitionSwitcher(
-        transitionBuilder: (child, primaryAnimation, secondaryAnimation) =>
-            FadeThroughTransition(
-          animation: primaryAnimation,
-          secondaryAnimation: secondaryAnimation,
-          child: child,
+      appBar: AppBar(
+        backgroundColor: primaryColor,
+        title: Text(appbarItems[ref.watch(indexProvider)]),
+        titleTextStyle: textTheme.headline5?.copyWith(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1,
         ),
-        child: pages[selectedPage],
+        titleSpacing: MediaQuery.of(context).size.width * 0.0725,
+        actions: [
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.023,
+            ),
+            child: IconButton(
+              iconSize: 27,
+              icon: const Icon(Icons.settings_suggest_outlined),
+              tooltip: 'More',
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('This is a snackbar')));
+              },
+            ),
+          ),
+        ],
+      ),
+      body: IndexedStack(
+        index: ref.watch(indexProvider),
+        children: bodyItems,
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -41,34 +89,11 @@ class _HomePageState extends State<HomePage> {
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
         enableFeedback: true,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.alarm),
-            label: 'Alarm',
-            backgroundColor: primaryColor,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.language_outlined),
-            label: 'World Clock',
-            backgroundColor: primaryColor,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.hourglass_empty_outlined),
-            label: 'Timer',
-            backgroundColor: primaryColor,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.timer_outlined),
-            label: 'Stopwatch',
-            backgroundColor: primaryColor,
-          ),
-        ],
-        currentIndex: selectedPage,
-        onTap: onItemTapped,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.add),
+        items: navItems,
+        currentIndex: ref.watch(indexProvider),
+        onTap: (index) {
+          ref.read(indexProvider.notifier).state = index;
+        },
       ),
     );
   }

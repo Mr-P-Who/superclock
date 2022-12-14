@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:superclock/home.dart';
 import 'package:superclock/theme/theme_constants.dart';
 
 void main() {
-  runApp(const SuperClock());
+  runApp(
+    const ProviderScope(
+      child: SuperClock(),
+    ),
+  );
 }
 
 class SuperClock extends StatelessWidget {
