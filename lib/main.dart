@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:superclock/home.dart';
+import 'package:superclock/theme/theme_constants.dart';
 
 void main() {
   runApp(const SuperClock());
@@ -12,9 +13,8 @@ class SuperClock extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
+      theme: myDarkTheme(context),
+      darkTheme: myDarkTheme(context),
       home: HomePage(),
     );
   }
